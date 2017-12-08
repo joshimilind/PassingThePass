@@ -23,7 +23,7 @@ class Sayhello(SendBye: ActorRef) extends Actor {
       * should go back to sender
       */
     case goodbye(str) =>
-      println(s"received $str  ..ok")
+      println(s"Sayhello received Message : $str  ..ok")
       context.stop(self)
 
     /**
@@ -42,7 +42,7 @@ class Saybye extends Actor {
       * the received string as it is
       */
     case Reply(str) =>
-      println("received bye " + str)
+      println(s"Saybye received Message : $str")
       sender ! goodbye("shutting down")
       context.stop(self)
 
@@ -66,7 +66,7 @@ object greet extends App {
     * Created actor for `SayHello` and passing actor of `SendBye` as an argument
     */
   val SendHello =
-    _system.actorOf(Props(new Sayhello(SendBye)), name = "itsforHello")
+    _system.actorOf(Props(new Sayhello(SendBye)), name = "ItsForHello")
 
   SendHello ! Hello
 }
