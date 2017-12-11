@@ -1,5 +1,6 @@
 package test.sender.mailbox
 import akka.actor._
+import akka.event.Logging
 
 case object Hello
 case class Reply(str: String)
@@ -9,11 +10,12 @@ case class goodbye(Str: String)
   * Expecting someone here
   */
 class SayHello(SendBye: ActorRef) extends Actor {
-
+  import context._
+  val log = Logging(system, this)
   def receive = {
     case Hello =>
-      println("received hello")
-
+//      println("received hello")
+      log.info("received hello")
       /**
         * communicating with `SayBye` with ActorRef as `SendBye`
         */
@@ -23,7 +25,9 @@ class SayHello(SendBye: ActorRef) extends Actor {
       * should go back to sender
       */
     case goodbye(str) =>
-      println(s"SayHello received Message : $str  ..ok")
+//      println(s"SayHello received Message : $str  ..ok")
+
+      log.info(s"SayHello received Message : $str  ..ok")
       context.stop(self)
 
     /**
@@ -34,6 +38,8 @@ class SayHello(SendBye: ActorRef) extends Actor {
 }
 
 class SayBye extends Actor {
+  import context._
+  val log = Logging(system, this)
 
   def receive = {
 
@@ -42,7 +48,10 @@ class SayBye extends Actor {
       * the received string as it is
       */
     case Reply(str) =>
-      println(s"SayBye received Message : $str")
+//      println(s"SayBye received Message : $str")
+
+      log.info(s"SayBye received Message : $str")
+
       sender ! goodbye("shutting down")
       context.stop(self)
 
