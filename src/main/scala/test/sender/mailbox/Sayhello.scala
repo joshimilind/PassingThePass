@@ -8,14 +8,14 @@ case class goodbye(Str: String)
 /**
   * Expecting someone here
   */
-class Sayhello(SendBye: ActorRef) extends Actor {
+class SayHello(SendBye: ActorRef) extends Actor {
 
   def receive = {
     case Hello =>
       println("received hello")
 
       /**
-        * communicating with `Saybye` eith ActorRef as `SendBye`
+        * communicating with `SayBye` with ActorRef as `SendBye`
         */
       SendBye ! Reply("thanks for hello")
 
@@ -23,7 +23,7 @@ class Sayhello(SendBye: ActorRef) extends Actor {
       * should go back to sender
       */
     case goodbye(str) =>
-      println(s"Sayhello received Message : $str  ..ok")
+      println(s"SayHello received Message : $str  ..ok")
       context.stop(self)
 
     /**
@@ -33,7 +33,7 @@ class Sayhello(SendBye: ActorRef) extends Actor {
   }
 }
 
-class Saybye extends Actor {
+class SayBye extends Actor {
 
   def receive = {
 
@@ -42,7 +42,7 @@ class Saybye extends Actor {
       * the received string as it is
       */
     case Reply(str) =>
-      println(s"Saybye received Message : $str")
+      println(s"SayBye received Message : $str")
       sender ! goodbye("shutting down")
       context.stop(self)
 
@@ -60,13 +60,13 @@ object greet extends App {
   /**
     * Created actor for `SendBye`
     */
-  val SendBye = _system.actorOf(Props[Saybye], name = "itsForBye")
+  val SendBye = _system.actorOf(Props[SayBye], name = "itsForBye")
 
   /**
     * Created actor for `SayHello` and passing actor of `SendBye` as an argument
     */
   val SendHello =
-    _system.actorOf(Props(new Sayhello(SendBye)), name = "ItsForHello")
+    _system.actorOf(Props(new SayHello(SendBye)), name = "ItsForHello")
 
   SendHello ! Hello
 }
